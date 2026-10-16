@@ -125,9 +125,9 @@ class BruhADiagWindow extends MusicBeatState
 			rightCharacter.alpha = 0;
 			rightCharacter.antialiasing = true;
 			// offset cuz yay!
-			if (FileSystem.exists("assets/hex/images/dialogue_sprites/bf/" + expression + "_offset.txt"))
+			if (openfl.Assets.exists("hex:assets/hex/images/dialogue_sprites/bf/" + expression + "_offset.txt"))
 			{
-				var offsets = File.getContent("assets/hex/images/dialogue_sprites/bf/" + expression + "_offset.txt")
+				var offsets = openfl.Assets.getText("hex:assets/hex/images/dialogue_sprites/bf/" + expression + "_offset.txt")
 					.replace("\n", "")
 					.replace("\r", "")
 					.replace("\t", "")
@@ -207,9 +207,9 @@ class BruhADiagWindow extends MusicBeatState
 			}
 			leftCharacter.antialiasing = true;
 			// offset cuz yay!
-			if (FileSystem.exists("assets/hex/images/dialogue_sprites/" + char.toLowerCase() + "/" + expression + "_offset.txt"))
+			if (openfl.Assets.exists("hex:assets/hex/images/dialogue_sprites/" + char.toLowerCase() + "/" + expression + "_offset.txt"))
 			{
-				var offsets = File.getContent("assets/hex/images/dialogue_sprites/" + char.toLowerCase() + "/" + expression + "_offset.txt")
+				var offsets = openfl.Assets.getText("hex:assets/hex/images/dialogue_sprites/" + char.toLowerCase() + "/" + expression + "_offset.txt")
 					.replace("\n", "")
 					.replace("\r", "")
 					.replace("\t", "")
@@ -629,9 +629,9 @@ class BruhADiagWindow extends MusicBeatState
 	public override function create()
 	{
 		if (song == "detectedEnd")
-			lines = File.getContent('assets/data/songs/detected/endDialogue.txt').split('\n');
+			lines = openfl.Assets.getText('assets/data/songs/detected/endDialogue.txt').split('\n');
 		else
-			lines = File.getContent('assets/data/songs/${song}/dialogue.txt').split('\n');
+			lines = openfl.Assets.getText('assets/data/songs/${song}/dialogue.txt').split('\n');
 		while (section != 1)
 		{
 			parseLine(lines[lineIndex]);
@@ -844,6 +844,7 @@ class BruhADiagWindow extends MusicBeatState
 				}
 			}
 
+			#if desktop
 			if (FlxG.keys.justPressed.S)
 			{
 				if (rightCharacter != null)
@@ -862,6 +863,7 @@ class BruhADiagWindow extends MusicBeatState
 						+ ";"
 						+ leftCharacter.angle);
 			}
+			#end
 		}
 
 		if (waitingOnUpdate)

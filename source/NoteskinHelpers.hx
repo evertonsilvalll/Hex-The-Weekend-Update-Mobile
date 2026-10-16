@@ -70,7 +70,7 @@ class NoteskinHelpers
 
 		// return Paths.getSparrowAtlas('noteskins/' + NoteskinHelpers.getNoteskinByID(FlxG.save.data.noteskin), "shared");
 		#else
-		return Paths.getSparrowAtlas('noteskins/Arrows', "shared");
+		return Paths.getSparrowAtlas('noteskins/' + getNoteskinByID(id), "shared");
 		#end
 	}
 
@@ -91,7 +91,7 @@ class NoteskinHelpers
 
 		// return Paths.getSparrowAtlas('noteskins/' + NoteskinHelpers.getNoteskinByID(FlxG.save.data.noteskin), "shared");
 		#else
-		return BitmapData.fromFile(Paths.image('noteskins/Arrows-pixel', "shared"));
+		return openfl.Assets.getBitmapData(Paths.image('noteskins/Arrows-pixel' + (ends ? '-ends' : ''), "shared"));
 		#end
 	}
 }

@@ -1,0 +1,64 @@
+name: Android APK
+
+on:
+  workflow_dispatch:
+  push:
+    branches: [main, 'coderabbit/**']
+    paths:
+      - 'source/**'
+      - 'assets/**'
+      - 'Project.xml'
+      - 'scripts/setup-android.sh'
+      - '.github/workflows/android.yml'
+  pull_request:
+    paths:
+      - 'source/**'
+      - 'assets/**'
+      - 'Project.xml'
+      - 'scripts/setup-android.sh'
+      - '.github/workflows/android.yml'
+
+permissions:
+  contents: read
+
+concurrency:
+  group: android-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  apk:
+    runs-on: ubuntu-22.04
+    timeout-minutes: 60
+    steps:
+      - uses: actions/checkout@v4
+      - uses: krdlab/setup-haxe@v1
+        with:
+          haxe-version: 4.2.5
+      # sdkmanager needs a modern JDK; Lime 7's Gradle needs JDK 8.
+      - uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: '17'
+      - uses: android-actions/setup-android@v3
+      - name: Install Android toolchain
+        run: sdkmanager 'platforms;android-30' 'build-tools;30.0.3' 'ndk;21.4.7075529'
+      - uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: '8'
+      - name: Install pinned Haxe libraries
+        run: bash scripts/setup-android.sh
+      - name: Configure Lime
+        run: |
+          haxelib run lime config ANDROID_SETUP true
+          haxelib run lime config ANDROID_SDK "$ANDROID_HOME"
+          haxelib run lime config ANDROID_NDK_ROOT "$ANDROID_HOME/ndk/21.4.7075529"
+          haxelib run lime config JAVA_HOME "$JAVA_HOME"
+      - name: Build debug-signed APK
+        run: haxelib run lime build android -debug -D HXCPP_COMPILE_THREADS=2
+      - uses: actions/upload-artifact@v4
+        with:
+          name: Hex-Weekend-Android-debug
+          path: export/debug/android/bin/app/build/outputs/apk/debug/*.apk
+          if-no-files-found: error
+          retention-days: 14

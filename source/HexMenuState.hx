@@ -46,7 +46,11 @@ class HexMenuData
 		{
 			path = dataPath;
 			Debug.logTrace("loading " + path);
+			#if android
+			var jsonShit = openfl.Assets.getText("hexMenu:" + dataPath);
+			#else
 			var jsonShit = sys.io.File.getContent(FileSystem.absolutePath(dataPath));
+			#end
 			var jsonData = Json.parse(jsonShit);
 			data = cast jsonData;
 		}

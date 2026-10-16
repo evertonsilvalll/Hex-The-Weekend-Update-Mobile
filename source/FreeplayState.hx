@@ -247,7 +247,6 @@ class FreeplayState extends MusicBeatState
 
 			var diffs = [];
 			var diffsThatExist = [];
-			#if FEATURE_FILESYSTEM
 			if (Paths.doesTextAssetExist(Paths.json('songs/$songId/$songId-hard')))
 				diffsThatExist.push("Hard");
 			if (Paths.doesTextAssetExist(Paths.json('songs/$songId/$songId-easy')))
@@ -263,9 +262,6 @@ class FreeplayState extends MusicBeatState
 			}
 			else
 			{
-			#else
-			diffsThatExist = ["Easy", "Normal", "Hard"];
-			#end
 				if (diffsThatExist.contains("Easy"))
 					FreeplayState.loadDiff(0, songId, diffs);
 				if (diffsThatExist.contains("Normal"))
@@ -503,11 +499,11 @@ class FreeplayState extends MusicBeatState
 	}
 
 	/**
- * Load into a song in free play, by name.
- * This is a static function, so you can call it anywhere.
- * @param songName The name of the song to load. Use the human readable name, with spaces.
- * @param isCharting If true, load into the Chart Editor instead.
- */
+	 * Load into a song in free play, by name.
+	 * This is a static function, so you can call it anywhere.
+	 * @param songName The name of the song to load. Use the human readable name, with spaces.
+	 * @param isCharting If true, load into the Chart Editor instead.
+	 */
 	public static function loadSongInFreePlay(songName:String, difficulty:Int, isCharting:Bool, reloadSong:Bool = false)
 	{
 		// Make sure song data is initialized first.
@@ -655,6 +651,7 @@ class FreeplayState extends MusicBeatState
 			diffText.text = CoolUtil.difficultyFromInt(curDifficulty).toUpperCase();
 
 		#if PRELOAD_ALL
+		#if FEATURE_STEPMANIA
 		if (songs[curSelected].songCharacter == "sm")
 		{
 			var data = songs[curSelected];
@@ -665,7 +662,8 @@ class FreeplayState extends MusicBeatState
 			FlxG.sound.playMusic(sound);
 		}
 		else
-			FlxG.sound.playMusic(Paths.inst(songs[curSelected].songName), 0);
+		#end
+		FlxG.sound.playMusic(Paths.inst(songs[curSelected].songName), 0);
 		#end
 
 		var hmm;
@@ -718,7 +716,9 @@ class FreeplayState extends MusicBeatState
 			}
 		}
 	}
-} class FreeplaySongMetadata
+}
+
+class FreeplaySongMetadata
 {
 	public var songName:String = "";
 	public var week:Int = 0;

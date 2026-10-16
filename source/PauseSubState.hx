@@ -246,6 +246,7 @@ class PauseSubState extends MusicBeatSubstate
 
 					FlxG.stage.removeEventListener(KeyboardEvent.KEY_DOWN, PlayState.instance.handleInput);
 					FlxG.stage.removeEventListener(KeyboardEvent.KEY_UP, PlayState.instance.releaseInput);
+					#if desktop
 					if (PlayState.instance.coolingHandler != null)
 					{
 						Debug.logTrace("removing cooling video");
@@ -254,6 +255,7 @@ class PauseSubState extends MusicBeatSubstate
 						PlayState.instance.coolingHandler.kill();
 						PlayState.instance.coolingHandler.bitmap.dispose();
 					}
+					#end
 					if (PlayState.isStoryMode)
 					{
 						GameplayCustomizeState.freeplayBf = 'bf';

@@ -213,11 +213,13 @@ class ResultsScreen extends FlxSubState
 
 			FlxG.stage.removeEventListener(KeyboardEvent.KEY_DOWN, PlayState.instance.handleInput);
 			FlxG.stage.removeEventListener(KeyboardEvent.KEY_UP, PlayState.instance.releaseInput);
+			#if desktop
 			if (PlayState.instance.coolingHandler != null)
 			{
 				PlayState.instance.coolingHandler.bitmap.stop();
 				PlayState.instance.coolingHandler.kill();
 			}
+			#end
 			if (PlayState.isStoryMode)
 			{
 				GameplayCustomizeState.freeplayBf = 'bf';
@@ -252,11 +254,13 @@ class ResultsScreen extends FlxSubState
 
 			FlxG.stage.removeEventListener(KeyboardEvent.KEY_DOWN, PlayState.instance.handleInput);
 			FlxG.stage.removeEventListener(KeyboardEvent.KEY_UP, PlayState.instance.releaseInput);
+			#if desktop
 			if (PlayState.instance.coolingHandler != null)
 			{
 				PlayState.instance.coolingHandler.bitmap.stop();
 				PlayState.instance.coolingHandler.kill();
 			}
+			#end
 
 			PlayState.isStoryMode = false;
 			PlayState.storyDifficulty = PlayState.storyDifficulty;

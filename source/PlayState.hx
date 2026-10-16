@@ -350,8 +350,10 @@ class PlayState extends MusicBeatState
 		{
 			remove(i);
 		}
+		#if FEATURE_LUAMODCHART
 		if (luaModchart != null)
 			luaModchart.die();
+		#end
 		songScoreDef = 0;
 		songScore = 0;
 		unspawnNotes = [];
@@ -660,6 +662,7 @@ class PlayState extends MusicBeatState
 		if (isStoryMode)
 			songMultiplier = 1;
 
+		#if desktop
 		if (Stage.curStage == "hexw" && SONG.songId.toLowerCase() == "cooling")
 		{
 			coolingVideo = new FlxSprite(-24, -224);
@@ -684,6 +687,7 @@ class PlayState extends MusicBeatState
 			}
 			coolingVideo.alpha = 0;
 		}
+		#end
 
 		for (i in Stage.toAdd)
 		{
@@ -1984,6 +1988,7 @@ class PlayState extends MusicBeatState
 			add(skipText);
 		}
 
+		#if desktop
 		if (Stage.curStage == "hexw" && SONG.songId.toLowerCase() == "cooling")
 		{
 			var perecentSupposed = (FlxG.sound.music.time / songMultiplier) / (FlxG.sound.music.length / songMultiplier);
@@ -1991,6 +1996,7 @@ class PlayState extends MusicBeatState
 			Debug.logTrace("doing the thing");
 			FlxTween.tween(coolingVideo, {alpha: 1}, 1);
 		}
+		#end
 	}
 
 	var debugNum:Int = 0;
@@ -2341,10 +2347,12 @@ class PlayState extends MusicBeatState
 						vocals.pause();
 			}
 
+			#if desktop
 			if (Stage.curStage == "hexw" && songStarted && SONG.songId.toLowerCase() == "cooling")
 			{
 				coolingHandler.bitmap.pause();
 			}
+			#end
 
 			#if FEATURE_DISCORD
 			DiscordClient.changePresence("PAUSED on "
@@ -2390,12 +2398,14 @@ class PlayState extends MusicBeatState
 				resyncVocals();
 			}
 
+			#if desktop
 			if (Stage.curStage == "hexw" && songStarted && SONG.songId.toLowerCase() == "cooling")
 			{
 				var perecentSupposed = (FlxG.sound.music.time / songMultiplier) / (FlxG.sound.music.length / songMultiplier);
 				coolingHandler.bitmap.seek(perecentSupposed); // I laughed my ass off so hard when I found out this was a fuckin PERCENTAGE
 				coolingHandler.bitmap.resume();
 			}
+			#end
 
 			if (startTimer != null)
 				if (!startTimer.finished)
@@ -2982,11 +2992,13 @@ class PlayState extends MusicBeatState
 			// Conductor.songPosition = FlxG.sound.music.time;
 			Conductor.songPosition += FlxG.elapsed * 1000;
 			Conductor.rawPosition = FlxG.sound.music.time;
+			#if desktop
 			if (coolingVideo != null)
 			{
 				if (!coolingHandler.bitmap.isPlaying && !paused && !endingSong)
 					coolingHandler.bitmap.resume();
 			}
+			#end
 			// sync
 			/*@:privateAccess
 				{

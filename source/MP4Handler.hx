@@ -7,11 +7,14 @@ import flixel.FlxState;
 import flixel.util.FlxColor;
 import flixel.util.FlxTimer;
 import openfl.events.Event;
+#if desktop
 import vlc.VlcBitmap;
+#end
 
 // THIS IS FOR TESTING
 // DONT STEAL MY CODE >:(
 // I stole it
+#if desktop
 class MP4Handler
 {
 	public var finishCallback:Void->Void;
@@ -193,3 +196,41 @@ class MP4Handler
 			bitmap.volume = 0;
 	}
 }
+#else
+
+/** Desktop VLC is unavailable on mobile; continue story scenes without a video. */
+class MP4Handler
+{
+	public var finishCallback:Void->Void;
+	public var stateCallback:FlxState;
+
+	var killed:Bool = false;
+
+	public function new()
+	{
+	}
+
+	public function playMP4(path:String, ?repeat:Bool = false, ?outputTo:FlxSprite = null, ?isWindow:Bool = false, ?isFullscreen:Bool = false,
+			?midSong:Bool = false):Void
+	{
+		if (killed || midSong)
+			return;
+		// Defer until the scene has finished creating and installed its callback.
+		new FlxTimer().start(0.01, function(_)
+		{
+			if (killed)
+				return;
+			killed = true;
+			if (finishCallback != null)
+				finishCallback();
+			else if (stateCallback != null)
+				LoadingState.loadAndSwitchState(stateCallback);
+		});
+	}
+
+	public function kill():Void
+	{
+		killed = true;
+	}
+}
+#end

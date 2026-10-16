@@ -1,5 +1,7 @@
 # HEX MOD
 
+Android build and touch controls: [Android port guide](docs/android.md).
+
 ## SHIT
 ### I GET A CRASH RELATING TO CAMERAS???
 
