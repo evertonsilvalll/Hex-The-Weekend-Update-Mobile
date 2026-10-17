@@ -52,7 +52,10 @@ class HEXDialogueBox extends FlxSpriteGroup // copied I know but fuck you
 		FlxG.sound.list.add(sound);
 		sound.fadeIn(1, 0, 0.8);
 
-		black = new FlxSprite(-200, -200).makeGraphic(9000, 9000, FlxColor.BLACK); // make a big graphic so people cant see gameplay shit
+		// Scale a tiny texture: a 9000x9000 bitmap costs over 300 MiB on mobile.
+		black = new FlxSprite(-200, -200).makeGraphic(1, 1, FlxColor.BLACK);
+		black.scale.set(9000, 9000);
+		black.updateHitbox();
 		add(black);
 
 		background = startingBackground;
@@ -63,7 +66,7 @@ class HEXDialogueBox extends FlxSpriteGroup // copied I know but fuck you
 		box.screenCenter(X);
 		box.y = FlxG.height * 0.64;
 
-		this.dialogueList = dialogueList;
+		this.dialogueList = dialogueList == null ? [] : dialogueList.copy();
 
 		portraitLeftHex = new FlxSprite(box.x, box.y - 105).loadGraphic(Paths.image('hex_nametag', 'hex'));
 		portraitLeftHex.updateHitbox();
@@ -123,13 +126,13 @@ class HEXDialogueBox extends FlxSpriteGroup // copied I know but fuck you
 			dialogueStarted = true;
 		}
 
-		if (FlxG.keys.justPressed.ANY && dialogueStarted == true)
+		if (!isEnding && dialogueStarted && (FlxG.keys.justPressed.ENTER || FlxG.keys.justPressed.SPACE))
 		{
 			remove(dialogue);
 
 			FlxG.sound.play(Paths.sound('clickText', "shared"), 0.8);
 
-			if (dialogueList[1] == null && dialogueList[0] != null)
+			if (FlxG.keys.justPressed.SPACE || dialogueList.length <= 1)
 			{
 				if (!isEnding)
 				{
@@ -150,7 +153,9 @@ class HEXDialogueBox extends FlxSpriteGroup // copied I know but fuck you
 
 					new FlxTimer().start(1.2, function(tmr:FlxTimer)
 					{
-						finishThing();
+						sound.stop();
+						if (finishThing != null)
+							finishThing();
 						kill();
 					});
 				}
@@ -169,21 +174,25 @@ class HEXDialogueBox extends FlxSpriteGroup // copied I know but fuck you
 
 	function startDialogue():Void
 	{
-		cleanDialog();
-		// var theDialog:Alphabet = new Alphabet(0, 70, dialogueList[0], false, true);
-		// dialogue = theDialog;
-		// add(theDialog);
-
-		var cleaned = false;
-
-		while (!cleaned)
+		// Consume commands until a spoken line is reached. Colons inside dialogue
+		// are text, not additional command delimiters.
+		while (dialogueList.length > 0)
 		{
-			if (dialogueList[0].contains(':'))
-				cleanDialog();
-			else
-				cleaned = true;
+			var parts = dialogueList[0].split(":");
+			var command = parts.length > 1 ? parts[1] : "";
+			cleanDialog();
+			if (parts.length < 3 || (command != "BGCHANGE" && command != "PLAYSOUND" && command != "BGTRACK"))
+				break;
 		}
-		// swagDialogue.text = ;
+		if (dialogueList.length == 0)
+		{
+			isEnding = true;
+			sound.stop();
+			if (finishThing != null)
+				finishThing();
+			kill();
+			return;
+		}
 		swagDialogue.resetText(dialogueList[0]);
 		swagDialogue.start(0.04, true);
 
@@ -212,16 +221,18 @@ class HEXDialogueBox extends FlxSpriteGroup // copied I know but fuck you
 	function fadeOutBackgroundThenNextOneThisIsAReallyLongFunctionNameIKnowButYouCanJustCryAboutIt(nextBg:String)
 	{
 		remove(background);
-		Main.dumpObject(background.graphic);
-		background = new FlxSprite(background.x, background.y).loadGraphic(Paths.image(nextBg, 'hex'));
+		background.destroy();
+		background = new FlxSprite(-340, -190).loadGraphic(Paths.image(nextBg, 'hex'));
 		background.setGraphicSize(Std.int(background.width * 0.8));
 		background.antialiasing = true;
-		add(background);
+		insert(1, background);
 	}
 
 	function cleanDialog():Void
 	{
 		var splitName:Array<String> = dialogueList[0].split(":");
+		if (splitName.length < 3)
+			return;
 		if (splitName[1] == 'BGCHANGE')
 		{
 			trace('BG CHANGE ' + splitName[2]);

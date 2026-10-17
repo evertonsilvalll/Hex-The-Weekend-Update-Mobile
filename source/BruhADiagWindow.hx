@@ -4,6 +4,7 @@ import sys.FileSystem;
 import flixel.FlxState;
 import flixel.FlxSubState;
 import flixel.util.FlxColor;
+import flixel.util.FlxTimer;
 import flixel.FlxCamera;
 import flixel.graphics.tile.FlxGraphicsShader;
 import flixel.tweens.FlxEase;
@@ -493,6 +494,9 @@ class BruhADiagWindow extends MusicBeatState
 						});
 					}
 				case "backToMenu":
+					if (leaving)
+						return;
+					leaving = true;
 					var state = new UnlockedState();
 					state.unlockSprite = "unlock_screen_2";
 					switchState(state);
@@ -561,56 +565,45 @@ class BruhADiagWindow extends MusicBeatState
 		}
 	}
 
-	public function toPlaystate()
+	function fadeToState(next:Void->MusicBeatState):Void
 	{
+		if (leaving)
+			return;
+		leaving = true;
+		waitingForFade = true;
 		tweenGroup(arrowGroup, 0, 1.9);
 		tweenGroup(bottomTyped, 0, 2);
 		tweenGroup(topMost, 0, 2);
 		tweenGroup(characterGroup, 0, 2);
+		for (background in backgrounds)
+			FlxTween.tween(background, {alpha: 0}, 2);
+		// A transition must not depend on the script having a background.
+		new FlxTimer().start(2, function(_) switchState(next()));
+	}
 
-		var done = false;
-
-		waitingForFade = true; // never stop it
-
-		for (i in backgrounds.keys())
-		{
-			FlxTween.tween(backgrounds[i], {alpha: 0}, 2, {
-				onComplete: function(tw)
-				{
-					if (!done)
-					{
-						done = true;
-						switchState(new PlayState());
-					}
-				}
-			});
-		}
+	public function toPlaystate()
+	{
+		fadeToState(function() return new PlayState());
 	}
 
 	public function toMainMenu()
 	{
-		tweenGroup(arrowGroup, 0, 1.9);
-		tweenGroup(bottomTyped, 0, 2);
-		tweenGroup(topMost, 0, 2);
-		tweenGroup(characterGroup, 0, 2);
+		fadeToState(function() return new HexMainMenu(HexMenuState.loadHexMenu("main-menu")));
+	}
 
-		var done = false;
-
-		waitingForFade = true; // never stop it
-
-		for (i in backgrounds.keys())
+	function finishDialogue():Void
+	{
+		if (leaving)
+			return;
+		if (song.contains("End"))
 		{
-			FlxTween.tween(backgrounds[i], {alpha: 0}, 2, {
-				onComplete: function(tw)
-				{
-					if (!done)
-					{
-						done = true;
-						switchState(new HexMainMenu(HexMenuState.loadHexMenu("main-menu")));
-					}
-				}
-			});
+			leaving = true;
+			var state = new UnlockedState();
+			state.unlockSprite = "unlock_screen_2";
+			switchState(state);
 		}
+		else
+			toPlaystate();
 	}
 
 	public override function load()
@@ -678,6 +671,8 @@ class BruhADiagWindow extends MusicBeatState
 
 	public var skipToggle:Bool = false;
 
+	var leaving:Bool = false;
+
 	public function addItems()
 	{
 		// layering is a bitch
@@ -720,10 +715,25 @@ class BruhADiagWindow extends MusicBeatState
 
 	public override function update(elapsed:Float)
 	{
+		if (leaving)
+		{
+			super.update(elapsed);
+			return;
+		}
+		// The Android PULAR button sends Space; B retains the confirmation flow.
+		if (FlxG.keys.justPressed.SPACE)
+		{
+			finishDialogue();
+			super.update(elapsed);
+			return;
+		}
 		if (!waitingForDiag && !waitingForFade && started)
 		{
 			lineIndex++;
-			parseLine(lines[lineIndex]);
+			if (lineIndex < lines.length)
+				parseLine(lines[lineIndex]);
+			else
+				finishDialogue();
 		}
 		else if (waitingForDiag)
 		{
@@ -765,14 +775,7 @@ class BruhADiagWindow extends MusicBeatState
 			}
 			skipToggle = false;
 			escapeText.alpha = 1;
-			if (song.contains("End"))
-			{
-				var state = new UnlockedState();
-				state.unlockSprite = "unlock_screen_2";
-				switchState(state);
-			}
-			else
-				toPlaystate();
+			finishDialogue();
 			FlxTween.tween(escapeText, {alpha: 0, y: 740}, 2, {ease: FlxEase.elasticIn});
 		}
 

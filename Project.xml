@@ -164,6 +164,8 @@
 
 	<!--Disable the Flixel core debugger. Automatically gets set whenever you compile in release mode!-->
 	<haxedef name="FLX_NO_DEBUG" unless="debug" />
+	<!-- Keep native crash diagnostics without shipping the desktop debugger UI. -->
+	<haxedef name="FLX_NO_DEBUG" if="android" />
 
 	<haxedef name="HXCPP_GC_BIG_BLOCKS"/>
 

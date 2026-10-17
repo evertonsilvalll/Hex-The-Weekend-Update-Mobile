@@ -7,6 +7,16 @@ class StoryScene extends MusicBeatState
 
 	public var path:String = "";
 
+	var leaving:Bool = false;
+
+	function finishScene():Void
+	{
+		if (leaving)
+			return;
+		leaving = true;
+		switchState(new BruhADiagWindow(PlayState.SONG.songId));
+	}
+
 	public function new(bruh)
 	{
 		path = bruh;
@@ -20,21 +30,18 @@ class StoryScene extends MusicBeatState
 
 	public override function update(elapsed)
 	{
-		if (FlxG.keys.justPressed.ESCAPE)
+		if (FlxG.keys.justPressed.ESCAPE || FlxG.keys.justPressed.ENTER || FlxG.keys.justPressed.SPACE)
 		{
 			handler.kill();
-			switchState(new BruhADiagWindow(PlayState.SONG.songId));
+			finishScene();
 		}
 		super.update(elapsed);
 	}
 
 	public override function create()
 	{
+		handler.finishCallback = finishScene;
 		handler.playMP4(Paths.video(path));
-		handler.finishCallback = function()
-		{
-			switchState(new BruhADiagWindow(PlayState.SONG.songId));
-		};
 		super.create();
 	}
 }

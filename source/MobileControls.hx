@@ -8,7 +8,6 @@ import flixel.input.keyboard.FlxKey;
 import openfl.display.Sprite;
 import openfl.display.Stage;
 import openfl.events.Event;
-import openfl.events.KeyboardEvent;
 import openfl.events.TouchEvent;
 import openfl.text.TextField;
 import openfl.text.TextFormat;
@@ -91,7 +90,7 @@ class MobileControls extends Sprite
 	function sendKey(code:Int, down:Bool):Void
 	{
 		// Feed both Flixel polling and PlayState's raw note handlers.
-		hostStage.dispatchEvent(new KeyboardEvent(down ? KeyboardEvent.KEY_DOWN : KeyboardEvent.KEY_UP, true, false, 0, code));
+		hostStage.dispatchEvent(MobileKeyboardEvent.create(code, down));
 	}
 
 	function onAction(pad:Int):Void
@@ -108,7 +107,7 @@ class MobileControls extends Sprite
 		while (subState != null && subState.subState != null)
 			subState = subState.subState;
 		var play:PlayState = Std.isOfType(state, PlayState) ? cast state : null;
-		var cutscene = false;
+		var cutscene = Std.isOfType(state, BruhADiagWindow) || Std.isOfType(state, StoryScene);
 		var gameplay = false;
 		if (play != null && subState == null)
 		{
