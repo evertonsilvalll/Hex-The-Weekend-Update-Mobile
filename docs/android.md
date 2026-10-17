@@ -164,3 +164,16 @@ across allocations and forced collections, then checks their self-references.
 The script sets low collection thresholds and uses bounded passes. A passing
 host test and Android compile do not confirm that the device crash is fixed;
 keep the diagnostic launcher and validate the updated APK on the affected phone.
+
+## ARMv7 atomic linkage
+
+The 32-bit diagnostic APK 2344 failed before game startup because its native
+library imported `__atomic_compare_exchange_4`, `__atomic_fetch_add_4`, and
+`__atomic_fetch_sub_4` without providing them. These helpers are supplied by the
+NDK static `libatomic`, not Android's public libc. `AndroidStartup` now links
+`-latomic` for ARMv7 and enables `--no-undefined` so missing native references
+fail the link instead of producing an APK that Android cannot load.
+
+This loader correction allows the architecture diagnostic to proceed; it does
+not establish that the separate ARM64 GC crash is fixed. Before delivery, check
+the final packaged ARMv7 ELF has no undefined `__atomic_*` imports.
