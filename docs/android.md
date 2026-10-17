@@ -68,3 +68,14 @@ Before distributing a build, verify on real ARMv7/ARM64 devices:
 5. Cooling without its visualizer, shaders/camera effects, audio sync and FPS.
 
 A passing compile is not evidence of device performance or touch latency.
+
+## Startup regression check
+
+Run `bash scripts/test-startup-bindings.sh` with the pinned Haxe/Neko libraries
+installed. It exercises the real controls constructor with fresh, legacy,
+custom and partial save data, before title-screen audio initialization.
+Missing volume binding strings must receive defaults without replacing saved
+custom bindings so the controls constructor never parses null key names.
+Android also performs asset cleanup, state loading and transitions on the main
+thread because those operations touch renderer resources. The loading screen
+may pause briefly while preparing the next menu or song.

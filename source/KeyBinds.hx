@@ -107,14 +107,15 @@ class KeyBinds
 			FlxG.save.data.muteBind = "ZERO";
 			trace("No MUTE");
 		}
-		if (FlxG.save.data.volumeUpKeys == null)
+		// Controls.loadKeyBinds reads these strings before TitleState initializes audio.
+		if (FlxG.save.data.volUpBind == null)
 		{
-			FlxG.save.data.volumeUpKeys = ["PLUS"];
+			FlxG.save.data.volUpBind = "PLUS";
 			trace("No VOLUP");
 		}
-		if (FlxG.save.data.volumeDownKeys == null)
+		if (FlxG.save.data.volDownBind == null)
 		{
-			FlxG.save.data.volumeDownKeys = ["MINUS"];
+			FlxG.save.data.volDownBind = "MINUS";
 			trace("No VOLDOWN");
 		}
 		if (FlxG.save.data.fullscreenBind == null)

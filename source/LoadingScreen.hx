@@ -57,19 +57,26 @@ class LoadingScreen extends MusicBeatState
 		if (!startLoad)
 		{
 			startLoad = true;
-			sys.thread.Thread.create(() ->
-			{
-				loadMutex.acquire();
-				Debug.logTrace("reset da assets");
-				MasterObjectLoader.resetAssets();
-				target.load();
-				target.loadedCompletely = true;
-				Debug.logTrace("we done lets gtfo " + target);
-				switchState(target, false, true);
-				loadMutex.release();
-			});
+			#if android
+			// Texture disposal and state transitions must use the render thread.
+			loadTarget();
+			#else
+			sys.thread.Thread.create(loadTarget);
+			#end
 		}
 		localProg = progress;
 		super.update(elapsed);
+	}
+
+	function loadTarget():Void
+	{
+		loadMutex.acquire();
+		Debug.logTrace("reset da assets");
+		MasterObjectLoader.resetAssets();
+		target.load();
+		target.loadedCompletely = true;
+		Debug.logTrace("we done lets gtfo " + target);
+		switchState(target, false, true);
+		loadMutex.release();
 	}
 }
