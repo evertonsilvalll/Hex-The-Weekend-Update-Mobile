@@ -69,6 +69,32 @@ Before distributing a build, verify on real ARMv7/ARM64 devices:
 
 A passing compile is not evidence of device performance or touch latency.
 
+## Android opening/menu atlases
+
+Android packages the generated atlases in `assets/android/` at the original
+asset IDs. The desktop/web originals are unchanged. Transparent borders are
+trimmed and frames repacked with one pixel of padding; logical frame sizes,
+offsets, names, order and visible pixels are preserved. No image is downscaled.
+
+The two title atlases require about 39.3 MiB of decoded RGBA data instead of
+128.1 MiB. The main menu atlas uses about 24.4 MiB instead of 45.8 MiB. Each
+generated texture fits within 4096x4096. These are bitmap sizes, not a measured
+process-memory total or confirmation that a reported device crash is resolved.
+Gameplay character atlases remain unchanged and can still require much more RAM.
+
+To regenerate or verify, use Python 3.9+ and Pillow 11.3.0 in a local virtualenv:
+
+```bash
+python3 -m venv export/atlas-tools
+export/atlas-tools/bin/pip install Pillow==11.3.0
+export/atlas-tools/bin/python scripts/optimize-android-atlases.py
+export/atlas-tools/bin/python scripts/optimize-android-atlases.py --verify
+```
+
+Generation verifies every frame against its original in logical sprite space,
+including transparent margins and offsets. A normal Android build needs no
+Python dependency because the generated assets are checked in.
+
 ## Startup regression check
 
 Run `bash scripts/test-startup-bindings.sh` with the pinned Haxe/Neko libraries

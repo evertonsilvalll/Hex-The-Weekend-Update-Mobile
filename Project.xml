@@ -52,7 +52,9 @@
 	<classpath name="source" />
 
 	<assets path="assets/preload" rename="assets" exclude="*.ogg" if="web"/>
-	<assets path="assets/preload" rename="assets" exclude="*.mp3" unless="web"/>
+	<assets path="assets/preload" rename="assets" exclude="*.mp3" unless="web || android"/>
+	<assets path="assets/preload" rename="assets" exclude="*.mp3|Title_Enter.png|Title_Enter.xml|logoBumpin.png|logoBumpin.xml" if="android"/>
+	<assets path="assets/android/preload" rename="assets" if="android"/>
 	
 	<!-- <define name="PRELOAD_ALL" /> -->
 	<define name="PRELOAD_ALL" unless="web" />
@@ -80,7 +82,9 @@
 	<assets path="assets/hex"    library="hex"    exclude="*.ogg" if="web"/>
 	<assets path="assets/hex"    library="hex"    exclude="*.mp3" unless="web"/>
 	<assets path="assets/hexMenu"    library="hexMenu"    exclude="*.ogg" if="web"/>
-	<assets path="assets/hexMenu"    library="hexMenu"    exclude="*.mp3" unless="web"/>
+	<assets path="assets/hexMenu"    library="hexMenu"    exclude="*.mp3" unless="web || android"/>
+	<assets path="assets/hexMenu" library="hexMenu" exclude="*.mp3|FNF_main_menu_assets.png|FNF_main_menu_assets.xml" if="android"/>
+	<assets path="assets/android/hexMenu" rename="assets/hexMenu" library="hexMenu" if="android"/>
 	<assets path="assets/sm"    library="sm"    exclude="*.ogg" if="web"/>
 	<assets path="assets/sm"    library="sm"    exclude="*.mp3" unless="web"/>
 
