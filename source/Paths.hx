@@ -259,8 +259,14 @@ class Paths
 		return 'assets/fonts/$key';
 	}
 
-	static public function getSparrowAtlas(key:String, ?library:String, ?isCharacter:Bool = false)
+	static public function getSparrowAtlas(key:String, ?library:String, ?isCharacter:Bool = false):FlxAtlasFrames
 	{
+		#if android
+		var mobileKey = isCharacter ? 'characters/$key' : key;
+		var pagesPath = file('images/$mobileKey.pages.xml', library);
+		if (OpenFlAssets.exists(pagesPath, AssetType.TEXT))
+			return AndroidAtlasFrames.load(pagesPath, library);
+		#end
 		if (isCharacter)
 		{
 			return FlxAtlasFrames.fromSparrow(loadImage('characters/$key', library), file('images/characters/$key.xml', library));

@@ -8,7 +8,7 @@ cp source/MobileTouchModel.hx "$test_dir/"
 haxe -cp "$test_dir" -cp tests -main MobileTouchModelTest --interp
 # Exercise persistence calls against the project's actual FlxSave API on Neko.
 haxelib run lime display android -debug | sed \
-  -e '/^-main /d' -e '/^-cpp /d' -e '/^-D android/d' \
+  -e '/^-main /d' -e '/^-cpp /d' -e '/^-D android/d' -e '/^-D FEATURE_LUAMODCHART/d' \
   -e '/^--macro keep("Main")/d' > "$test_dir/settings.hxml"
 haxe "$test_dir/settings.hxml" -D disable_cffi -cp tests -main MobileControlSettingsTest -neko "$test_dir/settings.n"
 neko "$test_dir/settings.n"

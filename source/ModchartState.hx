@@ -384,9 +384,8 @@ class ModchartState
 				PlayState.instance.addObject(PlayState.dad);
 			}
 		}
-		#end
-
 		new LuaSprite(sprite, toBeCalled).Register(lua);
+		#end
 
 		return toBeCalled;
 	}
@@ -427,10 +426,20 @@ class ModchartState
 		}
 
 		var path = Paths.lua('songs/${PlayState.SONG.songId}/modchart');
+		#if FEATURE_STEPMANIA
 		if (PlayState.isSM)
 			path = PlayState.pathToSm + "/modchart.lua";
+		#end
 
-		var result = LuaL.dofile(lua, path); // execute le file
+		// APK assets are not ordinary filesystem files. Keep dofile working for
+		// bundled backend scripts without extracting them to shared storage.
+		#if android
+		LuaAssetLoader.install(lua, function(asset:String):String
+		{
+			return openfl.utils.Assets.exists(asset) ? openfl.utils.Assets.getText(asset) : null;
+		});
+		#end
+		var result = openfl.utils.Assets.exists(path) ? LuaL.dostring(lua, openfl.utils.Assets.getText(path)) : LuaL.dofile(lua, path);
 
 		if (result != 0)
 		{

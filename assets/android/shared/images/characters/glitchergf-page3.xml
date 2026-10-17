@@ -1,0 +1,7 @@
+<?xml version='1.0' encoding='utf-8'?>
+<TextureAtlas imagePath="glitchergf-page3.png">
+	<SubTexture name="GF Dancing Beat Hair Landing0002" x="1" y="1" width="703" height="619" frameX="0" frameY="-29" frameWidth="703" frameHeight="648" />
+	<SubTexture name="GF Dancing Beat Hair Landing0003" x="706" y="1" width="699" height="619" frameX="-2" frameY="-29" frameWidth="703" frameHeight="648" />
+	<SubTexture name="GF Dancing Beat Hair Landing0004" x="1407" y="1" width="699" height="607" frameX="-2" frameY="-41" frameWidth="703" frameHeight="648" />
+	<SubTexture name="GF Dancing Beat Hair Landing0005" x="2108" y="1" width="699" height="607" frameX="-2" frameY="-41" frameWidth="703" frameHeight="648" />
+</TextureAtlas>

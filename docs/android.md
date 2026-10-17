@@ -54,8 +54,9 @@ The renderer override described in the original README is now checked in at
 ## Scope and device checks
 
 Android skips native desktop video cutscenes and the Cooling video visualizer.
-Lua modcharts, Discord RPC, filesystem mod loading and StepMania import remain
-exclusive to desktop. The built-in Haxe song/stage logic and packaged music,
+Bundled Lua modcharts (Detected) run on Android using the pinned LuaJIT binding;
+packaged scripts and their `dofile` dependencies load directly from APK assets.
+Discord RPC, filesystem mod loading and StepMania import remain desktop-only. The built-in Haxe song/stage logic and packaged music,
 charts, menu data and dialogue are retained. This is not full desktop feature
 parity. Large textures/audio can require substantial RAM.
 
@@ -177,3 +178,23 @@ fail the link instead of producing an APK that Android cannot load.
 This loader correction allows the architecture diagnostic to proceed; it does
 not establish that the separate ARM64 GC crash is fixed. Before delivery, check
 the final packaged ARMv7 ELF has no undefined `__atomic_*` imports.
+
+## First-week GF and Lua modcharts
+
+The four first-week GF atlases are generated losslessly into texture pages no
+larger than 4096 pixels under `assets/android/shared/`. The Android-only loader
+preserves frame order, offsets and original pixels while retaining every page
+for the animation lifetime. Each variant uses about 190 MiB of decoded texture
+storage instead of 256 MiB; this remains a substantial memory cost.
+
+Regenerate and verify with Pillow available:
+
+```sh
+python3 scripts/optimize-android-gf.py
+```
+
+On a Linux build host, `bash scripts/test-lua-modcharts.sh` exercises the native
+Lua asset callback and replays the original Detected choreography for 12,001
+frames, including tap/sustain transforms and reverse lane speeds. These host
+checks do not replace device checks of GF rendering, Detected performance,
+pause/resume and returning to the menu after the song.

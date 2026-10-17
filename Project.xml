@@ -81,7 +81,9 @@
 	<assets path="assets/songs"    library="songs"    exclude="*.ogg" if="web"/>
 	<assets path="assets/songs"    library="songs"    exclude="*.mp3" unless="web"/>
 	<assets path="assets/shared"   library="shared"   exclude="*.ogg" if="web"/>
-	<assets path="assets/shared"   library="shared"   exclude="*.mp3" unless="web"/>
+	<assets path="assets/shared"   library="shared"   exclude="*.mp3" unless="web || android"/>
+	<assets path="assets/shared" library="shared" exclude="*.mp3|GF_assets.png|GF_assets.xml|sunsetgf.png|sunsetgf.xml|nightgf.png|nightgf.xml|glitchergf.png|glitchergf.xml" if="android"/>
+	<assets path="assets/android/shared" rename="assets/shared" library="shared" if="android"/>
 	<assets path="assets/hex"    library="hex"    exclude="*.ogg" if="web"/>
 	<assets path="assets/hex"    library="hex"    exclude="*.mp3" unless="web"/>
 	<assets path="assets/hexMenu"    library="hexMenu"    exclude="*.ogg" if="web"/>
@@ -126,7 +128,7 @@
 	<haxelib name="faxe" if='switch'/>
 	<haxelib name="polymod" if="desktop"/>
 	<haxelib name="discord_rpc" if="desktop"/>
-	<haxelib name="linc_luajit" if="desktop"/>
+	<haxelib name="linc_luajit" if="desktop || android"/>
 	<haxelib name="hxvm-luajit" if="desktop"/>
 	<!-- <haxelib name="hxcpp-debug-server" if="desktop"/> -->
 
@@ -195,8 +197,8 @@
   <haxedef name="FEATURE_DISCORD" if="desktop" />
   <!-- Defines whether the file system can be read/written directly. Does not work in browser. -->
   <haxedef name="FEATURE_FILESYSTEM" if="desktop" />
-  <!-- Defines whether Lua Modcharts should be enabled. Only works on Windows. -->
-  <haxedef name="FEATURE_LUAMODCHART" if="desktop" />
+  <!-- Defines whether Lua Modcharts should be enabled on native desktop/Android. -->
+  <haxedef name="FEATURE_LUAMODCHART" if="desktop || android" />
   <!-- Defines whether WebM videos should be enabled. Currently only enabled on Windows. -->
   <haxedef name="FEATURE_WEBM" if="desktop" />
   <!-- Defines whether StepMania files can be loaded. -->
