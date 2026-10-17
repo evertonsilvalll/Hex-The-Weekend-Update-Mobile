@@ -48,6 +48,7 @@ class TitleState extends MusicBeatState
 
 	override public function create():Void
 	{
+		AndroidStartup.mark("Haxe: entrando no TitleState");
 		MasterObjectLoader.mutex = new Mutex();
 		// TODO: Refactor this to use OpenFlAssets.
 		#if FEATURE_FILESYSTEM
@@ -62,6 +63,7 @@ class TitleState extends MusicBeatState
 
 		FlxG.autoPause = false;
 
+		AndroidStartup.mark("Haxe: carregando controles e progresso");
 		FlxG.save.bind('hexweekend', 'kadedevandyingyang');
 
 		PlayerSettings.init();
@@ -127,6 +129,7 @@ class TitleState extends MusicBeatState
 
 	function startIntro()
 	{
+		AndroidStartup.mark("Haxe: montando tela inicial");
 		persistentUpdate = true;
 
 		var bg:FlxSprite = new FlxSprite().makeGraphic(FlxG.width, FlxG.height, FlxColor.fromRGB(0, 222, 240));
@@ -135,6 +138,7 @@ class TitleState extends MusicBeatState
 		// bg.updateHitbox();
 		add(bg);
 
+		AndroidStartup.mark("Haxe: carregando fundo da tela inicial");
 		var scrolled = new FlxBackdrop(Paths.image("move_now", "hex"), 0, 0, false, true);
 		scrolled.setPosition(0, 0);
 		scrolled.antialiasing = true;
@@ -149,6 +153,7 @@ class TitleState extends MusicBeatState
 		add(scrolled2);
 		scrolled2.velocity.set(0, 20);
 
+		AndroidStartup.mark("Haxe: carregando atlas do logo");
 		logoBl = new FlxSprite(270, 350);
 		logoBl.frames = Paths.getSparrowAtlas('logoBumpin');
 		logoBl.setGraphicSize(Std.int(logoBl.width * 0.8));
@@ -162,6 +167,7 @@ class TitleState extends MusicBeatState
 
 		logoBl.animation.play('logo bumpin');
 
+		AndroidStartup.mark("Haxe: carregando atlas Title_Enter");
 		titleText = new FlxSprite(50, FlxG.height * 0.76);
 		titleText.frames = Paths.getSparrowAtlas('Title_Enter');
 		titleText.setGraphicSize(Std.int(titleText.width * 0.8));
@@ -183,6 +189,7 @@ class TitleState extends MusicBeatState
 		blackScreen = new FlxSprite().makeGraphic(FlxG.width, FlxG.height, FlxColor.BLACK);
 		credGroup.add(blackScreen);
 
+		AndroidStartup.mark("Haxe: carregando fontes");
 		credTextShit = new Alphabet(0, 0, "ninjamuffin99\nPhantomArcade\nkawaisprite\nevilsk8er", true);
 		credTextShit.screenCenter();
 
@@ -226,6 +233,7 @@ class TitleState extends MusicBeatState
 			// music.loadStream(Paths.music('freakyMenu'));
 			// FlxG.sound.list.add(music);
 			// music.play();
+			AndroidStartup.mark("Haxe: iniciando musica da tela inicial");
 			FlxG.sound.playMusic(Paths.music('freakyMenu'), 0);
 
 			FlxG.sound.music.fadeIn(4, 0, 0.7);
@@ -233,6 +241,7 @@ class TitleState extends MusicBeatState
 			initialized = true;
 		}
 
+		AndroidStartup.mark("Haxe: tela inicial criada");
 		// credGroup.add(credTextShit);
 	}
 

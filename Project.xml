@@ -11,6 +11,9 @@
 		<config:android build-tools-version="30.0.3" />
 		<architecture name="armv7" />
 		<architecture name="arm64" />
+		<java path="android/src" />
+		<template path="android/AndroidManifest.xml" rename="app/src/main/AndroidManifest.xml" />
+		<template path="android/MainActivity.java" rename="app/src/main/java/com/hexmod/weekend/MainActivity.java" />
 	</section>
 
 	<!--Switch Export with Unique ApplicationID and Icon-->

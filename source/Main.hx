@@ -38,6 +38,7 @@ class Main extends Sprite
 
 	public static function main():Void
 	{
+		AndroidStartup.initialize();
 		// quick checks
 
 		Lib.current.addChild(new Main());
@@ -73,6 +74,7 @@ class Main extends Sprite
 
 	private function setupGame():Void
 	{
+		AndroidStartup.mark("Haxe: configurando janela");
 		var stageWidth:Int = Lib.current.stage.stageWidth;
 		var stageHeight:Int = Lib.current.stage.stageHeight;
 
@@ -101,10 +103,12 @@ class Main extends Sprite
 		bitmapFPS.smoothing = true;
 		#end
 
+		AndroidStartup.mark("Haxe: criando FlxGame");
 		game = new FlxGame(gameWidth, gameHeight, initialState, zoom, framerate, framerate, skipSplash, startFullscreen);
 		addChild(game);
 
 		#if android
+		AndroidStartup.mark("Haxe: criando controles de toque");
 		addChild(new MobileControls(stage));
 		#end
 
@@ -115,6 +119,7 @@ class Main extends Sprite
 
 		// Finish up loading debug tools.
 		Debug.onGameStart();
+		AndroidStartup.mark("Haxe: aguardando primeiro estado");
 	}
 
 	var game:FlxGame;

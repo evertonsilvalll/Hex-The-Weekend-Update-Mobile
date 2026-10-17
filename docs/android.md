@@ -105,3 +105,36 @@ custom bindings so the controls constructor never parses null key names.
 Android also performs asset cleanup, state loading and transitions on the main
 thread because those operations touch renderer resources. The loading screen
 may pause briefly while preparing the next menu or song.
+
+## Diagnostic startup launcher
+
+The test APK opens a Java-only screen before loading Lime/SDL or the game.
+Tap **Iniciar jogo** to launch. If the game closes, reopen the app, tap
+**Copiar relatório**, and paste the report into the support conversation.
+This is an investigation build, not confirmation that the device crash is fixed.
+
+The report stays local until the user copies it. It includes the APK version,
+device/Android version, supported ABIs, current process bitness, actual memory
+page size, RAM totals, and the last completed startup checkpoint. Once Haxe
+starts, it also records OpenGL renderer/version/maximum texture size and uncaught
+OpenFL errors without suppressing their normal handling. Java loader errors
+are saved before SDL displays its own error dialog.
+
+On Android 11+, app-only process exit history may identify a native crash,
+low-memory kill, Java exception or ANR. The latest exit can belong to an older
+APK, so compare its timestamp with the recorded attempt. On Android 12+, when
+the OS provides a native tombstone, a bounded decoder extracts the signal,
+abort/cause and up to 12 frames from the crashing thread. It skips memory dumps,
+logs and other threads. Missing or malformed traces are reported as unavailable;
+there is no logcat permission or automatic upload. OS records and individual
+checkpoints do not establish a root cause by themselves.
+
+The ARM64 game library requests 16 KiB ELF load-segment alignment with the
+pinned NDK. Verify the resulting ELF and all packaged native libraries after
+building. This addresses a linker alignment deficiency; Android 16 alone does
+not establish that a particular device uses 16 KiB pages, and alignment alone
+does not establish complete runtime compatibility.
+
+Run `bash scripts/test-tombstone-summary.sh` with Java 8+ to exercise synthetic
+native reports, out-of-order fields, excluded threads, malformed input and size
+limits. These host tests do not execute Android's launcher or native renderer.
