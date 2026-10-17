@@ -78,6 +78,10 @@ class Main extends Sprite
 		var stageWidth:Int = Lib.current.stage.stageWidth;
 		var stageHeight:Int = Lib.current.stage.stageHeight;
 
+		#if android
+		// Keep the same 16:9 playfield on phones and tablets; letterbox the native surface.
+		zoom = 1;
+		#else
 		if (zoom == -1)
 		{
 			var ratioX:Float = stageWidth / gameWidth;
@@ -86,6 +90,7 @@ class Main extends Sprite
 			gameWidth = Math.ceil(stageWidth / zoom);
 			gameHeight = Math.ceil(stageHeight / zoom);
 		}
+		#end
 
 		#if !cpp
 		framerate = 60;
@@ -106,6 +111,9 @@ class Main extends Sprite
 		AndroidStartup.mark("Haxe: criando FlxGame");
 		game = new FlxGame(gameWidth, gameHeight, initialState, zoom, framerate, framerate, skipSplash, startFullscreen);
 		addChild(game);
+		#if android
+		FlxG.scaleMode = new flixel.system.scaleModes.RatioScaleMode(false);
+		#end
 
 		#if android
 		AndroidStartup.mark("Haxe: criando controles de toque");

@@ -17,6 +17,10 @@ import flixel.input.keyboard.FlxKey;
 import flixel.math.FlxMath;
 import flixel.text.FlxText;
 import flixel.util.FlxColor;
+#if android
+import MobileControlOptions.MobileControlModeOption;
+import MobileControlOptions.MobileHitboxVisibilityOption;
+#end
 
 class OptionCata extends FlxSprite
 {
@@ -118,6 +122,8 @@ class OptionsMenu extends FlxSubState
 	{
 		options = [
 			new OptionCata(50, 40, "Gameplay", [
+				#if android new MobileControlModeOption(), new MobileHitboxVisibilityOption(),
+				#end
 				new ScrollSpeedOption("Change your scroll speed. (1 = Chart dependent)"),
 				new OffsetThing("Change the note visual offset (how many milliseconds a note looks like it is offset in a chart)"),
 				new MOffsetThing("Change the note audio offset (how many milliseconds a note is offset in a chart)"),
@@ -140,7 +146,8 @@ class OptionsMenu extends FlxSubState
 				new RotateSpritesOption("Should the game rotate the sprites to do color quantization (turn off for bar skins)"),
 				new EditorRes("Not showing the editor grid will greatly increase editor performance"),
 				new DistractionsAndEffectsOption("Toggle stage distractions that can hinder your gameplay."),
-				new MiddleScrollOption("Put your lane in the center or on the right."), new HealthBarOption("Toggles health bar visibility"),
+				new MiddleScrollOption("Put your lane in the center or on the right."),
+				new HealthBarOption("Toggles health bar visibility"),
 				new JudgementCounter("Show your judgements that you've gotten in the song"),
 				new LaneUnderlayOption("How transparent your lane is, higher = more visible."),
 				new StepManiaOption("Sets the colors of the arrows depending on quantization instead of direction."),
@@ -169,11 +176,17 @@ class OptionsMenu extends FlxSubState
 				new ResetSettings("Reset ALL your settings. This is irreversible!")
 			]),
 			new OptionCata(-1, 125, "Editing Keybinds", [
-				new LeftKeybind("The left note's keybind"), new DownKeybind("The down note's keybind"), new UpKeybind("The up note's keybind"),
-				new RightKeybind("The right note's keybind"), new PauseKeybind("The keybind used to pause the game"),
-				new ResetBind("The keybind used to die instantly"), new MuteBind("The keybind used to mute game audio"),
-				new VolUpBind("The keybind used to turn the volume up"), new VolDownBind("The keybind used to turn the volume down"),
-				new FullscreenBind("The keybind used to fullscreen the game")], true),
+				new LeftKeybind("The left note's keybind"),
+				new DownKeybind("The down note's keybind"),
+				new UpKeybind("The up note's keybind"),
+				new RightKeybind("The right note's keybind"),
+				new PauseKeybind("The keybind used to pause the game"),
+				new ResetBind("The keybind used to die instantly"),
+				new MuteBind("The keybind used to mute game audio"),
+				new VolUpBind("The keybind used to turn the volume up"),
+				new VolDownBind("The keybind used to turn the volume down"),
+				new FullscreenBind("The keybind used to fullscreen the game")
+			], true),
 			new OptionCata(-1, 125, "Editing Judgements", [
 				new SickMSOption("How many milliseconds are in the SICK hit window"),
 				new GoodMsOption("How many milliseconds are in the GOOD hit window"),
