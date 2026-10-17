@@ -32,8 +32,12 @@ haxelib run lime config ANDROID_SETUP true
 haxelib run lime config ANDROID_SDK /path/to/android-sdk
 haxelib run lime config ANDROID_NDK_ROOT /path/to/android-sdk/ndk/21.4.7075529
 haxelib run lime config JAVA_HOME /path/to/jdk8
-haxelib run lime build android -debug -D HXCPP_COMPILE_THREADS=2
+HXCPP_COMPILE_THREADS=2 haxelib run lime build android -debug
 ```
+
+Alternatively, export `ANDROID_SDK`, `ANDROID_NDK_ROOT` and `JAVA_HOME`, then
+run `bash scripts/build-android.sh`. This compiles locally without GitHub Actions
+or a GitHub account. It uses the same pinned libraries and debug signing.
 
 The APK is under `export/debug/android/bin/app/build/outputs/apk/debug/`.
 The renderer override described in the original README is now checked in at
