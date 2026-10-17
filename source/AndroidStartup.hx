@@ -7,7 +7,8 @@ import lime.system.JNI;
 import openfl.Lib;
 import openfl.events.UncaughtErrorEvent;
 
-@:buildXml("<target id='haxe' if='HXCPP_ARM64'><flag value='-Wl,-z,max-page-size=16384'/><flag value='-Wl,-z,common-page-size=16384'/></target>")
+// Lime 7.9 passes ARMV7 without M32; hxcpp 4.3 otherwise inherits host bitness.
+@:buildXml("<section if='HXCPP_ARMV7'><unset name='HXCPP_M64'/><set name='HXCPP_M32' value='1'/></section><target id='haxe' if='HXCPP_ARM64'><flag value='-Wl,-z,max-page-size=16384'/><flag value='-Wl,-z,common-page-size=16384'/></target>")
 #end
 class AndroidStartup
 {

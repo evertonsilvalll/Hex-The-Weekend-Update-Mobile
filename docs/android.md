@@ -16,8 +16,8 @@ an update reports a signature conflict, uninstall the old test build first
 (this deletes its local progress).
 
 The workflow pins Haxe 4.2.5, Lime 7.9.0, OpenFL 9.1.0, Flixel 4.11.0 and the
-remaining libraries in `scripts/setup-android.sh`. It installs SDK 30, build
-tools 30.0.3 and NDK 21.4.7075529, then uses Java 8 for Lime's Gradle 5.6.3.
+remaining libraries in `scripts/setup-android.sh`, including hxcpp 4.3.2.
+It installs SDK 30, build tools 30.0.3 and NDK 21.4.7075529, then uses Java 8 for Lime's Gradle 5.6.3.
 SDK installation runs with Java 17. These legacy versions match this engine;
 do not update individual libraries without rebuilding and testing the port.
 
@@ -138,3 +138,29 @@ does not establish complete runtime compatibility.
 Run `bash scripts/test-tombstone-summary.sh` with Java 8+ to exercise synthetic
 native reports, out-of-order fields, excluded threads, malformed input and size
 limits. These host tests do not execute Android's launcher or native renderer.
+
+## ARM64 garbage collector runtime
+
+The native crash report from APK 2342 resolved to `BitmapData.__Mark` visiting
+an invalid `__textureContext` pointer while an image allocation triggered GC.
+The device reported 4 KiB pages and a working OpenGL context. This locates the
+failure in managed-object traversal; it does not prove that `Title_Enter` is
+corrupt or that Android killed the app for low memory.
+
+The port now pins hxcpp **4.3.2**, which includes upstream fix
+[e772513](https://github.com/HaxeFoundation/hxcpp/commit/e77251367c876b6bbe2d7117c6647d2b0bb8ec76):
+use `setjmp` to capture ARM64 registers and keep the captured stack frame alive
+until collection completes. hxcpp 4.2.1 predates both changes. Updating only a
+compiler define would omit the stack-frame lifetime fix. Other Haxe/Lime/OpenFL
+versions remain pinned. `AndroidStartup` also clears hxcpp's inferred 64-bit host
+flag for ARMv7: Lime 7.9 supplies `HXCPP_ARMV7` without an explicit `HXCPP_M32`.
+ARM64 retains its 64-bit compiler flags. Run setup again before rebuilding an
+existing checkout.
+
+`bash scripts/test-native-gc-roots.sh` builds a native host regression using the
+pinned runtime's own `TestBigStack` fixture and the `setjmp` capture path used
+on ARM64. It retains many recursive references
+across allocations and forced collections, then checks their self-references.
+The script sets low collection thresholds and uses bounded passes. A passing
+host test and Android compile do not confirm that the device crash is fixed;
+keep the diagnostic launcher and validate the updated APK on the affected phone.
